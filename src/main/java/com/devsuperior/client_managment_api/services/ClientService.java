@@ -29,6 +29,7 @@ public class ClientService {
     // Find a client by id
     @Transactional(readOnly = true)
     public ClientDTO findById(Long id) {
+        // ***CHANGE EXCEPTION***
         Client client = repository.findById(id).orElseThrow(() -> new RuntimeException());
 
         return new ClientDTO(client);
@@ -50,7 +51,9 @@ public class ClientService {
             copyDtoToEntity(dto, entity);
             entity = repository.save(entity);
             return new ClientDTO(entity);
-        } catch (EntityNotFoundException e) {
+        }
+        // ***CHANGE EXCEPTION***
+        catch (EntityNotFoundException e) {
             throw new EntityNotFoundException(("Entity not found."));
         }
     }
@@ -63,7 +66,9 @@ public class ClientService {
         }
         try {
             repository.deleteById(id);
-        } catch (DataIntegrityViolationException e) {
+        }
+        // ***CHANGE EXCEPTION***
+        catch (DataIntegrityViolationException e) {
             throw new DataIntegrityViolationException("Referential integrity violation");
         }
     }
