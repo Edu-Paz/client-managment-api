@@ -3,9 +3,9 @@ package com.devsuperior.client_managment_api.services;
 import com.devsuperior.client_managment_api.dto.ClientDTO;
 import com.devsuperior.client_managment_api.entities.Client;
 import com.devsuperior.client_managment_api.repositories.ClientRepository;
+import com.devsuperior.client_managment_api.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -29,8 +29,7 @@ public class ClientService {
     // Find a client by id
     @Transactional(readOnly = true)
     public ClientDTO findById(Long id) {
-        // ***CHANGE EXCEPTION***
-        Client client = repository.findById(id).orElseThrow(() -> new RuntimeException());
+        Client client = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Resource not found."));
 
         return new ClientDTO(client);
     }
@@ -52,9 +51,8 @@ public class ClientService {
             entity = repository.save(entity);
             return new ClientDTO(entity);
         }
-        // ***CHANGE EXCEPTION***
         catch (EntityNotFoundException e) {
-            throw new EntityNotFoundException(("Entity not found."));
+            throw new ResourceNotFoundException(("Resource not found."));
         }
     }
 
@@ -62,15 +60,10 @@ public class ClientService {
     @Transactional(propagation = Propagation.SUPPORTS)
     public void delete(Long id) {
         if (!repository.existsById(id)) {
-            throw new EntityNotFoundException(("Entity not found"));
+            throw new ResourceNotFoundException(("Resource not found"));
         }
-        try {
             repository.deleteById(id);
-        }
-        // ***CHANGE EXCEPTION***
-        catch (DataIntegrityViolationException e) {
-            throw new DataIntegrityViolationException("Referential integrity violation");
-        }
+
     }
 
     private void copyDtoToEntity(ClientDTO dto, Client entity) {
