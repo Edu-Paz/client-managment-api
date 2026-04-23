@@ -4,6 +4,7 @@ import com.devsuperior.client_managment_api.entities.Client;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 
@@ -16,6 +17,7 @@ public class ClientDTO {
     private Double income;
     @PastOrPresent(message = "The date must be in the past or present")
     private LocalDate birthDate;
+    @Positive(message = "Must be 0 or positive")
     private Integer children;
 
     public ClientDTO() {
